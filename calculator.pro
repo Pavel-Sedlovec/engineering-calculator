@@ -8,14 +8,16 @@ CONFIG += c++11
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += include
+
 SOURCES += \
-    core.cpp \
-    main.cpp \
-    mainwindow.cpp
+    src/core.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp
 
 HEADERS += \
-    core.h \
-    mainwindow.h
+    include/core.h \
+    include/mainwindow.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
