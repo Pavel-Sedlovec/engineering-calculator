@@ -1,4 +1,4 @@
-QT       += core gui
+QT += core gui widgets printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,14 +14,18 @@ SOURCES += \
     src/core.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/parsermath.cpp
+    src/parsermath.cpp \
+    src/qcustomplot.cpp
 
 HEADERS += \
     include/core.h \
     include/mainwindow.h \
-    include/parsermath.h
+    include/parsermath.h \
+    include/qcustomplot.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+win32-g++:QMAKE_CXXFLAGS += -Wa,-mbig-obj
+win32-g++:QMAKE_CFLAGS   += -Wa,-mbig-obj
