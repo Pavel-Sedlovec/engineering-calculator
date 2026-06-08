@@ -3,7 +3,7 @@
 #ifndef CORE_H
 #define CORE_H
 
-enum TokenType { MULL, DIV, PLUS, MINUS, NUMBER, LPAREN, RPAREN, FUNC, FACT };
+enum TokenType { MULL, DIV, PLUS, MINUS, NUMBER, LPAREN, RPAREN, FUNC, FACT, VARIABLE };
 
 struct Token
 {

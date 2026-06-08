@@ -69,6 +69,12 @@ std::vector<Token> tokenize(std::string str)
                 toc.funcName = funcName;
                 tokens.push_back(toc);
             }
+            else if(funcName == "x" || funcName =="X"){
+                Token toc;
+                toc.type = VARIABLE;
+                toc.funcName = funcName;
+                tokens.push_back(toc);
+            }
             continue;
         }
         else if(str[i] == '!'){
