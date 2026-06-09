@@ -5,6 +5,8 @@
 #include <QMainWindow>
 #include <QObject>
 #include <QtWidgets>
+#include "qcustomplot.h"
+#include "core.h"
 
 
 class MainWindow : public QMainWindow
@@ -33,10 +35,14 @@ public:
     QPushButton *m_equally;
 
     QLineEdit *m_lineEdit;
+    QCustomPlot *m_plot;
     MainWindow(QWidget *parent = nullptr);
 
+    void paint_chart(std::vector<Token> vec);
+    bool check_variable(std::vector<Token> vec);
     void OnClick();
     void onClick_equally();
+
 
     ~MainWindow();
 };

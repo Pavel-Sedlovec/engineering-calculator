@@ -19,14 +19,52 @@ void MainWindow::onClick_equally()
             qDebug() << vec[i].type << vec[i].value;
         }
 
+        if(check_variable(vec)){
+            paint_chart(vec);
+            return;
+        }
+
         Parser parser(vec);
         double res = parser.parse();
 
         qDebug() << res;
         m_lineEdit->setText(QString::number(res));
+
     } catch (const std::runtime_error &error) {
         m_lineEdit->setText("Error: " + QString::fromStdString(error.what()));
     }
+}
+
+bool MainWindow::check_variable(std::vector<Token> vec){
+    for(int i = 0; i < vec.size(); i++){
+        if(vec[i].type == VARIABLE){
+            return true;
+        }
+    }
+    return false;
+}
+
+void MainWindow::paint_chart(std::vector<Token> vec){
+    Parser parser(vec);
+    int pointsCount = 101;
+    QVector<double> x(pointsCount);
+    QVector<double> y(pointsCount);
+
+    double xStart = -10.0;
+    double xEnd = 10.0;
+    double step = (xEnd - xStart) / (pointsCount - 1);
+
+    for(int i = 0; i < pointsCount; i++){
+        x[i] = xStart + i*step;
+        y[i] = parser.parse(x[i]);
+    }
+
+    m_plot->graph(0)->setData(x, y);
+
+    m_plot->xAxis->setRange(xStart, xEnd);
+    m_plot->yAxis->rescale();
+
+    m_plot->replot();
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -36,12 +74,12 @@ MainWindow::MainWindow(QWidget *parent)
     m_widget = new QWidget();
     m_grid = new QGridLayout();
     m_widget->setLayout(m_grid);
-    m_lineEdit = new QLineEdit();
-    QRegularExpression rx("^[0-9,+\\-*/()]*$");
+    m_lineEdit = new QLineEdit();    
+    // QRegularExpression rx("^[0-9.+\\-*/()]*$");
 
-    QRegularExpressionValidator *validator = new QRegularExpressionValidator(rx, this);
+    // QRegularExpressionValidator *validator = new QRegularExpressionValidator(rx, this);
 
-    m_lineEdit->setValidator(validator);
+    // m_lineEdit->setValidator(validator);
 
     m_num_1 = new QPushButton("1");
     m_num_2 = new QPushButton("2");
@@ -59,6 +97,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_minus = new QPushButton("-");
     m_multiply = new QPushButton("*");
     m_equally = new QPushButton("=");
+
+    m_plot = new QCustomPlot();
+    m_plot->addGraph();
 
     //connect(m_lineEdit, &QLineEdit::textChanged, m_num_1, &QPushButton::setText);
 
@@ -97,6 +138,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_grid->addWidget(m_minus, 3, 3);
     m_grid->addWidget(m_multiply, 4, 3);
     m_grid->addWidget(m_equally, 0, 3);
+
+    m_grid->addWidget(m_plot, 0, 4, 5, 1);
+
+    m_grid->setColumnStretch(4, 1);
 
     this->setCentralWidget(m_widget);
 }
