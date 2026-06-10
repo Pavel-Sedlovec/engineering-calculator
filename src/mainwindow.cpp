@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "core.h"
+#include "controller.h"
 
 void MainWindow::OnClick()
 {
@@ -11,70 +12,52 @@ void MainWindow::OnClick()
 
 void MainWindow::onClick_equally()
 {
-    try {
-        std::vector<Token> vec = tokenize(m_lineEdit->text().toStdString());
 
-        qDebug() << "Tokens size" << vec.size();
-        for (int i = 0; i < vec.size(); i++) {
-            qDebug() << vec[i].type << vec[i].value;
-        }
+    std::string expression = m_lineEdit->text().toStdString();
 
-        if(check_variable(vec)){
-            paint_chart(vec);
-            return;
-        }
+    CalcRes res = m_controller->processExpression(expression);
 
-        Parser parser(vec);
-        double res = parser.parse();
+    if (!res.isSuccess) {
+        m_lineEdit->setText("Error: " + res.errorMessage);
+        return;
+    }
 
-        qDebug() << res;
-        m_lineEdit->setText(QString::number(res));
+    if (res.isGraph) {
+        m_plot->clearGraphs();
 
-    } catch (const std::runtime_error &error) {
-        m_lineEdit->setText("Error: " + QString::fromStdString(error.what()));
+        m_plot->addGraph();
+        m_plot->graph(0)->setData(res.xData, res.yData);
+
+        m_plot->rescaleAxes();
+        m_plot->replot();
+
+        m_lineEdit->setText("График построен");
+    }
+    else {
+        m_lineEdit->setText(QString::number(res.result));
     }
 }
 
-bool MainWindow::check_variable(std::vector<Token> vec){
-    for(int i = 0; i < vec.size(); i++){
-        if(vec[i].type == VARIABLE){
-            return true;
-        }
-    }
-    return false;
-}
-
-void MainWindow::paint_chart(std::vector<Token> vec){
-    Parser parser(vec);
-    int pointsCount = 101;
-    QVector<double> x(pointsCount);
-    QVector<double> y(pointsCount);
-
-    double xStart = -10.0;
-    double xEnd = 10.0;
-    double step = (xEnd - xStart) / (pointsCount - 1);
-
-    for(int i = 0; i < pointsCount; i++){
-        x[i] = xStart + i*step;
-        y[i] = parser.parse(x[i]);
-    }
-
-    m_plot->graph(0)->setData(x, y);
-
-    m_plot->xAxis->setRange(xStart, xEnd);
-    m_plot->yAxis->rescale();
-
-    m_plot->replot();
-}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     counter = 0;
+    m_controller = new Controller();
     m_widget = new QWidget();
     m_grid = new QGridLayout();
     m_widget->setLayout(m_grid);
-    m_lineEdit = new QLineEdit();    
+
+    m_grid->setSpacing(6);
+    m_grid->setContentsMargins(10, 10, 10, 10);
+
+    m_lineEdit = new QLineEdit();
+
+    QFont lineEditFont = m_lineEdit->font();
+    lineEditFont.setPointSize(18);
+    m_lineEdit->setFont(lineEditFont);
+    m_lineEdit->setAlignment(Qt::AlignRight);
+    m_lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     // QRegularExpression rx("^[0-9.+\\-*/()]*$");
 
     // QRegularExpressionValidator *validator = new QRegularExpressionValidator(rx, this);
@@ -98,8 +81,34 @@ MainWindow::MainWindow(QWidget *parent)
     m_multiply = new QPushButton("*");
     m_equally = new QPushButton("=");
 
+    m_sin = new QPushButton("sin");
+    m_cos = new QPushButton("cos");
+    m_tan = new QPushButton("tan");
+    m_log = new QPushButton("log");
+    m_ln = new QPushButton("ln");
+    m_fact = new QPushButton("!");
+    m_var_x = new QPushButton("x");
+    m_dot = new QPushButton(".");
+    m_clear = new QPushButton("C");
+    m_history = new QPushButton("H");
+
+    QList<QPushButton*> allButtons = {
+        m_num_1, m_num_2, m_num_3, m_num_4, m_num_5, m_num_6, m_num_7, m_num_8, m_num_9, m_num_0,
+        m_div, m_sum, m_minus, m_multiply, m_equally,
+        m_sin, m_cos, m_tan, m_log, m_ln, m_fact, m_var_x, m_dot, m_clear, m_history
+    };
+
+    QFont btnFont = m_num_1->font();
+    btnFont.setPointSize(11);
+
+    for (QPushButton* btn : allButtons) {
+        btn->setFont(btnFont);
+        btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
+
     m_plot = new QCustomPlot();
     m_plot->addGraph();
+    m_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //connect(m_lineEdit, &QLineEdit::textChanged, m_num_1, &QPushButton::setText);
 
@@ -120,30 +129,67 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_multiply, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_equally, &QPushButton::clicked, this, &MainWindow::onClick_equally);
 
-    m_grid->addWidget(m_lineEdit, 0, 0, 1, 3);
-    m_grid->addWidget(m_num_1, 1, 0);
-    m_grid->addWidget(m_num_2, 1, 1);
-    m_grid->addWidget(m_num_3, 1, 2);
-    m_grid->addWidget(m_num_4, 2, 0);
-    m_grid->addWidget(m_num_5, 2, 1);
-    m_grid->addWidget(m_num_6, 2, 2);
-    m_grid->addWidget(m_num_7, 3, 0);
-    m_grid->addWidget(m_num_8, 3, 1);
-    m_grid->addWidget(m_num_9, 3, 2);
+    connect(m_sin, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_cos, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_tan, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_log, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_ln, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_fact, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_var_x, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_dot, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_clear, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_history, &QPushButton::clicked, this, &MainWindow::OnClick);
 
-    m_grid->addWidget(m_num_0, 4, 0, 1, 3);
+    m_grid->addWidget(m_history, 0, 0);
+    m_grid->addWidget(m_clear,   0, 1);
 
-    m_grid->addWidget(m_div, 1, 3);
-    m_grid->addWidget(m_sum, 2, 3);
-    m_grid->addWidget(m_minus, 3, 3);
-    m_grid->addWidget(m_multiply, 4, 3);
-    m_grid->addWidget(m_equally, 0, 3);
+    m_grid->addWidget(m_lineEdit, 1, 0, 1, 6);
 
-    m_grid->addWidget(m_plot, 0, 4, 5, 1);
+    m_grid->addWidget(m_sin,   2, 0);
+    m_grid->addWidget(m_cos,   2, 1);
+    m_grid->addWidget(m_num_7, 2, 2);
+    m_grid->addWidget(m_num_8, 2, 3);
+    m_grid->addWidget(m_num_9, 2, 4);
+    m_grid->addWidget(m_div,   2, 5);
 
-    m_grid->setColumnStretch(4, 1);
+    m_grid->addWidget(m_tan,   3, 0);
+    m_grid->addWidget(m_log,   3, 1);
+    m_grid->addWidget(m_num_4, 3, 2);
+    m_grid->addWidget(m_num_5, 3, 3);
+    m_grid->addWidget(m_num_6, 3, 4);
+    m_grid->addWidget(m_multiply, 3, 5);
+
+    m_grid->addWidget(m_ln,    4, 0);
+    m_grid->addWidget(m_fact,  4, 1);
+    m_grid->addWidget(m_num_1, 4, 2);
+    m_grid->addWidget(m_num_2, 4, 3);
+    m_grid->addWidget(m_num_3, 4, 4);
+    m_grid->addWidget(m_minus, 4, 5);
+
+    m_grid->addWidget(m_var_x, 5, 0);
+    m_grid->addWidget(m_dot,   5, 1);
+    m_grid->addWidget(m_num_0, 5, 3);
+    m_grid->addWidget(m_sum,   5, 4);
+    m_grid->addWidget(m_equally, 5, 5);
+
+    m_grid->addWidget(m_plot, 0, 6, 6, 1);
+
+    m_grid->setColumnStretch(6, 1);
+
+    for(int i = 0; i < 6; ++i) {
+        m_grid->setColumnStretch(i, 1);
+    }
+
+    m_grid->setColumnStretch(6, 5);
+
+    m_grid->setRowStretch(0, 1);
+    m_grid->setRowStretch(1, 2);
+    for(int i = 2; i <= 5; ++i) {
+        m_grid->setRowStretch(i, 1);
+    }
 
     this->setCentralWidget(m_widget);
+    this->resize(950, 550);
 }
 
 MainWindow::~MainWindow() {}

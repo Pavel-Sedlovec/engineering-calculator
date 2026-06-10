@@ -7,6 +7,7 @@
 #include <QtWidgets>
 #include "qcustomplot.h"
 #include "core.h"
+#include "controller.h"
 
 
 class MainWindow : public QMainWindow
@@ -34,9 +35,21 @@ public:
     QPushButton *m_multiply;
     QPushButton *m_equally;
 
+    QPushButton *m_sin;
+    QPushButton *m_cos;
+    QPushButton *m_tan;
+    QPushButton *m_log;
+    QPushButton *m_ln;
+    QPushButton *m_fact;
+    QPushButton *m_var_x;
+    QPushButton *m_dot;
+    QPushButton *m_clear;
+    QPushButton *m_history;
+
     QLineEdit *m_lineEdit;
     QCustomPlot *m_plot;
     MainWindow(QWidget *parent = nullptr);
+    Controller *m_controller;
 
     void paint_chart(std::vector<Token> vec);
     bool check_variable(std::vector<Token> vec);
