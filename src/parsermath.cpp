@@ -1,30 +1,31 @@
 #include "parsermath.h"
+#include "core.h"
 #include <cmath>
 #include <string>
 #include <iostream>
 
 
-double accept_func(std::string funcName, double x){
+ParseResult accept_func(std::string funcName, double x){
     if (funcName == "sin"){
-        return my_sin(x);
+        return {my_sin(x), true, ""};
     }
     else if (funcName == "cos"){
-        return my_cos(x);
+        return {my_cos(x), true, ""};
     }
     else if (funcName == "tan"){
-        return my_tan(x);
+        return {my_tan(x), true, ""};
     }
     else if (funcName == "log"){
-        return my_log(x);
+        return {my_log(x), true, ""};
     }
     else if (funcName == "ln"){
-        return my_ln(x);
+        return {my_ln(x), true, ""};
     }
     else if (funcName == "fact"){
-        return my_fact(x);
+        return {my_fact(x), true, ""};
     }
     else {
-        throw std::runtime_error("the function does not exist");
+        return{0.0, false, "the function does not exist"};
     }
 }
 
