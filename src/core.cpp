@@ -64,7 +64,7 @@ std::vector<Token> tokenize(std::string str)
             while(i < str.length() && std::isalpha(str[i])){
                 funcName +=str[i++];
             }
-            if(funcName == "sin" || funcName == "cos" || funcName =="tan" || funcName == "log" || funcName == "ln"){
+            if(funcName == "sin" || funcName == "cos" || funcName =="tan" || funcName == "log" || funcName == "ln" || funcName == "sqrt"){
                 Token toc;
                 toc.type = FUNC;
                 toc.funcName = funcName;

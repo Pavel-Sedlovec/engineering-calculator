@@ -11,5 +11,6 @@ double my_sin(double x);
 double my_cos(double x);
 double my_tan(double x);
 double my_fact(double x);
+double my_sqrt(double x);
 
 #endif // PARSERMATH_H

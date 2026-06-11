@@ -24,6 +24,9 @@ ParseResult accept_func(std::string funcName, double x){
     else if (funcName == "fact"){
         return {my_fact(x), true, ""};
     }
+    else if (funcName == "sqrt"){
+        return {my_sqrt(x), true, ""};
+    }
     else {
         return{0.0, false, "the function does not exist"};
     }
@@ -51,4 +54,8 @@ double my_tan(double x){
 
 double my_fact(double x){
     return std::tgamma(x + 1.0);
+}
+
+double my_sqrt(double x){
+    return std::sqrt(x);
 }
