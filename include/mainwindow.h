@@ -40,11 +40,14 @@ public:
     QPushButton *m_tan;
     QPushButton *m_log;
     QPushButton *m_ln;
+    QPushButton *m_sqrt;
     QPushButton *m_fact;
     QPushButton *m_var_x;
     QPushButton *m_dot;
     QPushButton *m_clear;
     QPushButton *m_history;
+    QPushButton *m_parens;
+
 
     QLineEdit *m_lineEdit;
     QCustomPlot *m_plot;
@@ -55,6 +58,7 @@ public:
     bool check_variable(std::vector<Token> vec);
     void OnClick();
     void onClick_equally();
+    void calculateResult();
 
 
     ~MainWindow();

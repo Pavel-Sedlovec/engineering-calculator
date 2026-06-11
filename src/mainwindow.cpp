@@ -5,12 +5,33 @@
 void MainWindow::OnClick()
 {
     QPushButton *but = (QPushButton *) sender();
-    QString str = m_lineEdit->text();
-    str += but->text();
-    m_lineEdit->setText(str);
+    QString btnText = but->text();
+    QString currentText = m_lineEdit->text();
+
+    if (btnText == "=") {
+        calculateResult();
+        return;
+    }
+
+    if (btnText == "C") {
+        m_lineEdit->clear();
+        return;
+    }
+
+    if (btnText == "sin()" || btnText == "cos()" || btnText == "tan()" ||
+        btnText == "log()" || btnText == "ln()"  || btnText == "sqrt()" || btnText == "()")
+    {
+        m_lineEdit->insert(btnText);
+
+        m_lineEdit->setCursorPosition(m_lineEdit->cursorPosition() - 1);
+
+        return;
+    }
+
+    m_lineEdit->insert(btnText);
 }
 
-void MainWindow::onClick_equally()
+void MainWindow::calculateResult()
 {
 
     std::string expression = m_lineEdit->text().toStdString();
@@ -81,21 +102,23 @@ MainWindow::MainWindow(QWidget *parent)
     m_multiply = new QPushButton("*");
     m_equally = new QPushButton("=");
 
-    m_sin = new QPushButton("sin");
-    m_cos = new QPushButton("cos");
-    m_tan = new QPushButton("tan");
-    m_log = new QPushButton("log");
-    m_ln = new QPushButton("ln");
+    m_sin = new QPushButton("sin()");
+    m_cos = new QPushButton("cos()");
+    m_tan = new QPushButton("tan()");
+    m_log = new QPushButton("log()");
+    m_ln = new QPushButton("ln()");
+    m_sqrt = new QPushButton("sqrt()");
     m_fact = new QPushButton("!");
     m_var_x = new QPushButton("x");
     m_dot = new QPushButton(".");
     m_clear = new QPushButton("C");
     m_history = new QPushButton("H");
+    m_parens = new QPushButton("()");
 
     QList<QPushButton*> allButtons = {
         m_num_1, m_num_2, m_num_3, m_num_4, m_num_5, m_num_6, m_num_7, m_num_8, m_num_9, m_num_0,
         m_div, m_sum, m_minus, m_multiply, m_equally,
-        m_sin, m_cos, m_tan, m_log, m_ln, m_fact, m_var_x, m_dot, m_clear, m_history
+        m_sin, m_cos, m_tan, m_log, m_ln, m_sqrt, m_fact, m_var_x, m_dot, m_clear, m_history,m_parens
     };
 
     QFont btnFont = m_num_1->font();
@@ -104,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent)
     for (QPushButton* btn : allButtons) {
         btn->setFont(btnFont);
         btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        btn->setFocusPolicy(Qt::NoFocus);
     }
 
     m_plot = new QCustomPlot();
@@ -127,21 +151,24 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_sum, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_minus, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_multiply, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_equally, &QPushButton::clicked, this, &MainWindow::onClick_equally);
+    connect(m_equally, &QPushButton::clicked, this, &MainWindow::OnClick);
 
     connect(m_sin, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_cos, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_tan, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_log, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_ln, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_sqrt, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_fact, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_var_x, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_dot, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_clear, &QPushButton::clicked, this, &MainWindow::OnClick);
     connect(m_history, &QPushButton::clicked, this, &MainWindow::OnClick);
+    connect(m_parens, &QPushButton::clicked, this, &MainWindow::OnClick);
 
     m_grid->addWidget(m_history, 0, 0);
     m_grid->addWidget(m_clear,   0, 1);
+    m_grid->addWidget(m_parens,   0, 2);
 
     m_grid->addWidget(m_lineEdit, 1, 0, 1, 6);
 
@@ -168,6 +195,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_grid->addWidget(m_var_x, 5, 0);
     m_grid->addWidget(m_dot,   5, 1);
+    m_grid->addWidget(m_sqrt,   5, 2);
     m_grid->addWidget(m_num_0, 5, 3);
     m_grid->addWidget(m_sum,   5, 4);
     m_grid->addWidget(m_equally, 5, 5);
