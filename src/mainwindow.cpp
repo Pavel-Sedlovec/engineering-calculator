@@ -218,6 +218,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setCentralWidget(m_widget);
     this->resize(950, 550);
+
+    connect(m_lineEdit, &QLineEdit::returnPressed, this, &MainWindow::calculateResult);
+
 }
 
 MainWindow::~MainWindow() {}
