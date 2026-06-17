@@ -128,6 +128,8 @@ MainWindow::MainWindow(QWidget *parent)
         btn->setFont(btnFont);
         btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         btn->setFocusPolicy(Qt::NoFocus);
+
+        connect(btn, &QPushButton::clicked, this, &MainWindow::OnClick);
     }
 
     m_plot = new QCustomPlot();
@@ -135,36 +137,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //connect(m_lineEdit, &QLineEdit::textChanged, m_num_1, &QPushButton::setText);
-
-    connect(m_num_1, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_2, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_3, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_4, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_5, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_6, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_7, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_8, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_9, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_num_0, &QPushButton::clicked, this, &MainWindow::OnClick);
-
-    connect(m_div, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_sum, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_minus, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_multiply, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_equally, &QPushButton::clicked, this, &MainWindow::OnClick);
-
-    connect(m_sin, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_cos, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_tan, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_log, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_ln, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_sqrt, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_fact, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_var_x, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_dot, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_clear, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_history, &QPushButton::clicked, this, &MainWindow::OnClick);
-    connect(m_parens, &QPushButton::clicked, this, &MainWindow::OnClick);
 
     m_grid->addWidget(m_lineEdit, 0, 0, 1, 6);
 
