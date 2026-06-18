@@ -46,7 +46,7 @@ public:
     QPushButton *m_var_x;
     QPushButton *m_dot;
     QPushButton *m_clear;
-    QPushButton *m_history;
+    QPushButton *m_backspace;
     QPushButton *m_parens;
 
 

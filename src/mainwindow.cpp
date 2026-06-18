@@ -8,6 +8,11 @@ void MainWindow::OnClick()
     QString btnText = but->text();
     QString currentText = m_lineEdit->text();
 
+    if (btnText == "⌫") {
+        m_lineEdit->backspace();
+        return;
+    }
+
     if (btnText == "=") {
         calculateResult();
         return;
@@ -135,13 +140,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_var_x = new QPushButton("x");
     m_dot = new QPushButton(".");
     m_clear = new QPushButton("C");
-    m_history = new QPushButton("H");
+    m_backspace = new QPushButton("⌫");
     m_parens = new QPushButton("()");
 
     QList<QPushButton*> allButtons = {
         m_num_1, m_num_2, m_num_3, m_num_4, m_num_5, m_num_6, m_num_7, m_num_8, m_num_9, m_num_0,
         m_div, m_sum, m_minus, m_multiply, m_equally,
-        m_sin, m_cos, m_tan, m_log, m_ln, m_sqrt, m_fact, m_var_x, m_dot, m_clear, m_history,m_parens
+        m_sin, m_cos, m_tan, m_log, m_ln, m_sqrt, m_fact, m_var_x, m_dot, m_clear, m_backspace,m_parens
     };
 
     QFont btnFont = m_num_1->font();
@@ -175,7 +180,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_grid->addWidget(m_num_9, 2, 2);
     m_grid->addWidget(m_div,   2, 3);
     m_grid->addWidget(m_clear, 2, 4);
-    m_grid->addWidget(m_history, 2, 5);
+    m_grid->addWidget(m_backspace, 2, 5);
 
     m_grid->addWidget(m_num_4, 3, 0);
     m_grid->addWidget(m_num_5, 3, 1);
